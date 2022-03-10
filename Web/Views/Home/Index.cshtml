@@ -1,0 +1,143 @@
+﻿
+
+<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
+<div class="progress">
+    <div class="progress-bar" role="progressbar" aria-valuenow="0"
+         aria-valuemin="0" aria-valuemax="100" style="width:0%">
+    </div>
+</div>
+
+<div id="cardplaceholder"></div>
+
+<script src="js/jquery/jquery.js"></script>
+
+
+<script src="js/signalr/dist/browser/signalr.js"></script>
+
+<script>
+    (async () => {
+        const hubConnection = new signalR.HubConnectionBuilder()
+            .withUrl("/generator")
+            .build();
+        await hubConnection.start();
+
+        let currentProgress = 0;
+
+
+        const setProgress = progress => {
+            $('.progress-bar').css('width', progress+'%').attr('aria-valuenow', progress);
+        }
+
+        const createRow = ({functionText, avalancheEffect}) =>
+            $("<tr/>").append($("<td/>", {
+                    html: $("<pre/>", {
+                            text: functionText
+                        })
+
+                })).append($("<td/>",  {
+                    text: avalancheEffect
+                }));
+
+
+
+
+        hubConnection.on("bestchanged",
+            item => {
+                const tableBody = $("#bestTable");
+                tableBody.html('');
+                tableBody.append(createRow(item));
+
+
+            });
+
+
+
+        hubConnection.on("progress", progress => {
+            if (progress > currentProgress) {
+                currentProgress = progress;
+
+                setProgress(currentProgress);
+            }
+        });
+
+        const startStream = (formData) => {
+            hubConnection.stream("generate", formData)
+                .subscribe({
+                    next: item => {
+                        console.log(item);
+
+                        const table = $("#all > table");
+
+                        console.log(table.html());
+
+                        table.append(createRow(item));
+
+
+                    },
+                    complete: () => {
+                        var li = document.createElement("li");
+                        li.textContent = "Stream completed";
+                        document.body.appendChild(li);
+                    },
+                    error: err => {
+                        console.log(err);
+                        var li = document.createElement("li");
+                        li.textContent = err;
+                        document.body.appendChild(li);
+                    }
+                });
+
+        }
+        $("form").on("submit",
+            e => {
+                e.preventDefault();
+
+                currentProgress = 0;
+                setProgress(currentProgress);
+
+                const formData = new FormData(e.target);
+
+                const obj = Object.fromEntries(formData);
+                console.log(obj);
+
+                for (const key in obj) {
+                    const value = obj[key];
+                    if (value === 'true' || value === 'false')
+                    {
+                        obj[key] = Boolean(value);
+                    }
+
+                }
+                obj.Count = parseInt(obj.Count);
+
+                startStream(obj);
+            }
+        );
+
+
+    })();
+
+</script>
+
+
+<vc:options-form>
+
+</vc:options-form>
+
+
+<div style="background-color: rebeccapurple">
+    Best
+    <table id="bestTable">
+        <thead>
+            <tr>
+                <td>Function Text</td>
+                <td>Avalanche Effect</td>
+            </tr>
+        </thead>
+    </table>
+
+</div>
+
+
+<vc:function-list></vc:function-list>
+
