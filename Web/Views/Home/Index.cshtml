@@ -1,18 +1,29 @@
-﻿
+﻿<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+<link rel="stylesheet" href="~/css/site.css" />
+<script src="js/jquery/jquery.js" .></script>
+<script src="js/signalr/dist/browser/signalr.js"></script>
 
-<link rel="stylesheet" href="lib/bootstrap/dist/css/bootstrap.css" />
-<div class="progress">
-    <div class="progress-bar" role="progressbar" aria-valuenow="0"
-         aria-valuemin="0" aria-valuemax="100" style="width:0%">
+<div class="container-fluid">
+    <div class="row">
+        <div class="col p-3">
+            <partial name="_ConfigForm" />
+        </div>
+        <div class="col p-3 container-fluid">
+            <div class="row">
+                @await Html.PartialAsync("_Table", new ViewDataDictionary(ViewData){{"id" , "best"}, {"name" ,"Best function"}, {"scrollable", false}})
+            </div>
+            <div class="row">
+               @await Html.PartialAsync("_Table", new ViewDataDictionary(ViewData){{"id" , "all"}, {"name" ,"All functions"}, {"scrollable", true}})
+            </div>
+        </div>
+    </div>
+    <div class="progress">
+        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0"
+            aria-valuemax="100"></div>
     </div>
 </div>
 
-<div id="cardplaceholder"></div>
 
-<script src="js/jquery/jquery.js"></script>
-
-
-<script src="js/signalr/dist/browser/signalr.js"></script>
 
 <script>
     (async () => {
@@ -25,25 +36,25 @@
 
 
         const setProgress = progress => {
-            $('.progress-bar').css('width', progress+'%').attr('aria-valuenow', progress);
+            $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
         }
 
-        const createRow = ({functionText, avalancheEffect}) =>
+        const createRow = ({ functionText, avalancheEffect }) =>
             $("<tr/>").append($("<td/>", {
-                    html: $("<pre/>", {
-                            text: functionText
-                        })
+                html: $("<pre/>", {
+                    text: functionText
+                })
 
-                })).append($("<td/>",  {
-                    text: avalancheEffect
-                }));
+            })).append($("<td/>", {
+                text: avalancheEffect
+            }));
 
 
 
 
         hubConnection.on("bestchanged",
             item => {
-                const tableBody = $("#bestTable");
+                const tableBody = $("#best tbody");
                 tableBody.html('');
                 tableBody.append(createRow(item));
 
@@ -66,7 +77,7 @@
                     next: item => {
                         console.log(item);
 
-                        const table = $("#all > table");
+                        const table = $("#all table");
 
                         console.log(table.html());
 
@@ -102,8 +113,7 @@
 
                 for (const key in obj) {
                     const value = obj[key];
-                    if (value === 'true' || value === 'false')
-                    {
+                    if (value === 'true' || value === 'false') {
                         obj[key] = Boolean(value);
                     }
 
@@ -118,26 +128,3 @@
     })();
 
 </script>
-
-
-<vc:options-form>
-
-</vc:options-form>
-
-
-<div style="background-color: rebeccapurple">
-    Best
-    <table id="bestTable">
-        <thead>
-            <tr>
-                <td>Function Text</td>
-                <td>Avalanche Effect</td>
-            </tr>
-        </thead>
-    </table>
-
-</div>
-
-
-<vc:function-list></vc:function-list>
-
