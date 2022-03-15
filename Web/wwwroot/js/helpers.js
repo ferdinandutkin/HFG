@@ -39,7 +39,7 @@
 
 export const attachValidation = form => {
     
-    const checkboxes = form.find("input:checkbox").get();
+    const operationsCheckboxes = form.find(".operations:input:checkbox").get();
     
     let messages = {};
     let rules = {
@@ -61,15 +61,15 @@ export const attachValidation = form => {
         }
     };
     let groups = {
-        operationsGroup: checkboxes.map(el => el.name).join(' ')
+        operationsGroup: operationsCheckboxes.map(el => el.name).join(' ')
     };
 
-    checkboxes.forEach(checkbox => {
+    operationsCheckboxes.forEach(checkbox => {
         rules[checkbox.name] = {
             require_from_group: [1, ".operations"]
         }
         messages[checkbox.name] = {
-            require_from_group: "Select at least one"
+            require_from_group: "Select at least one operation type"
         }
     })
     
