@@ -33,7 +33,7 @@ import {attachValidation, formToObject} from "./helpers.js"
     hubConnection.on("bestchanged",
         item => {
             const tableBody = $("#best tbody");
-            tableBody.html('');
+            tableBody.empty();
             tableBody.append(createRow(item));
 
 
@@ -65,9 +65,9 @@ import {attachValidation, formToObject} from "./helpers.js"
 
                 },
                 complete: () => {
-                    var li = document.createElement("li");
-                    li.textContent = "Stream completed";
-                    document.body.appendChild(li);
+                    const doneModal = $("#doneModal");
+                    doneModal.modal("show");
+                    setTimeout(() => doneModal.modal("hide"), 4000);
                 },
                 error: err => {
                     console.log(err);
