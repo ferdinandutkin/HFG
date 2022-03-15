@@ -1,8 +1,8 @@
-﻿<link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
-<link rel="stylesheet" href="~/css/site.css" />
-<script src="js/jquery/jquery.js" .></script>
-<script src="js/signalr/dist/browser/signalr.js"></script>
-
+﻿<link rel="stylesheet" href="@Url.Content("~/lib/bootstrap/dist/css/bootstrap.css")" />
+<link rel="stylesheet" href="@Url.Content("~/css/site.css")" />
+<script src="@Url.Content("~/js/jquery/jquery.js")"></script>
+<script src="@Url.Content("~/js/signalr/dist/browser/signalr.js")"></script>
+<script src="@Url.Content("~/js/site.js")"></script>
 <div class="container-fluid">
     <div class="row">
         <div class="col p-3">
@@ -25,7 +25,11 @@
 
 
 
+
 <script>
+
+
+
     (async () => {
         const hubConnection = new signalR.HubConnectionBuilder()
             .withUrl("/generator")
@@ -71,8 +75,8 @@
             }
         });
 
-        const startStream = (formData) => {
-            hubConnection.stream("generate", formData)
+        const startStream = config => {
+            hubConnection.stream("generate", config)
                 .subscribe({
                     next: item => {
                         console.log(item);
@@ -103,24 +107,8 @@
             e => {
                 e.preventDefault();
 
-                currentProgress = 0;
-                setProgress(currentProgress);
+                startStream(formToObject(e.target));
 
-                const formData = new FormData(e.target);
-
-                const obj = Object.fromEntries(formData);
-                console.log(obj);
-
-                for (const key in obj) {
-                    const value = obj[key];
-                    if (value === 'true' || value === 'false') {
-                        obj[key] = Boolean(value);
-                    }
-
-                }
-                obj.Count = parseInt(obj.Count);
-
-                startStream(obj);
             }
         );
 
