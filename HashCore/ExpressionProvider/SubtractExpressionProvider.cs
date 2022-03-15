@@ -4,8 +4,7 @@ namespace HashCore.ExpressionProvider;
 
 class SubtractExpressionProvider : IParametrizedExpressionProvider
 {
+    private static readonly Random Random = new();
     public Expression GetExpression(ParameterExpression parameterExpression, GeneratorConfig config)
-    {
-        return Expression.SubtractAssign(parameterExpression, Expression.Constant(new Random().Next()));
-    }
+        => Expression.SubtractAssign(parameterExpression, Expression.Constant(Random.Next(int.MinValue, 0)));
 }

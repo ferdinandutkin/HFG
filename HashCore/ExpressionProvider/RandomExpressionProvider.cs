@@ -16,6 +16,45 @@ class RandomExpressionProvider : IParametrizedExpressionProvider
     };
 
     private static readonly Random Random = new();
-    public Expression GetExpression(ParameterExpression parameterExpression, GeneratorConfig config) => 
-        ParametrizedExpressionProviders[Random.Next(ParametrizedExpressionProviders.Length)].GetExpression(parameterExpression, config);
+    public Expression GetExpression(ParameterExpression parameterExpression, GeneratorConfig config)
+    {
+        List<IParametrizedExpressionProvider> parametrizedExpressionProviders = new(ParametrizedExpressionProviders.Length);
+
+        if (config.Xor)
+        {
+            parametrizedExpressionProviders.Add(new XorExpressionProvider());
+        }
+        if (config.Subtract)
+        {
+            parametrizedExpressionProviders.Add(new SubtractExpressionProvider());
+        }
+        if (config.Or)
+        {
+            parametrizedExpressionProviders.Add(new OrExpressionProvider());
+        }
+        if (config.Add)
+        {
+            parametrizedExpressionProviders.Add(new AddExpressionProvider());
+        }
+        if (config.RShiftXor)
+        {
+            parametrizedExpressionProviders.Add(new RShiftXorExpressionProvider());
+        }
+        if (config.LShiftXor)
+        {
+            parametrizedExpressionProviders.Add(new LShiftXorExpressionProvider());
+        }
+        if (config.LShiftAdd)
+        {
+            parametrizedExpressionProviders.Add(new LShiftAddExpressionProvider());
+        }
+        if (config.LShiftSubtract)
+        {
+            parametrizedExpressionProviders.Add(new LShiftSubtractExpressionProvider());
+        }
+
+        return parametrizedExpressionProviders[Random.Next(0, parametrizedExpressionProviders.Count)].GetExpression(parameterExpression, config);
+
+    }
+        
 }

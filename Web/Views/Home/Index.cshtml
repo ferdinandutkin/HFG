@@ -2,7 +2,8 @@
 <link rel="stylesheet" href="@Url.Content("~/css/site.css")" />
 <script src="@Url.Content("~/js/jquery/jquery.js")"></script>
 <script src="@Url.Content("~/js/signalr/dist/browser/signalr.js")"></script>
-<script src="@Url.Content("~/js/site.js")"></script>
+<script src="@Url.Content("~/lib/jquery-validation/dist/jquery.validate.js")"></script>
+<script src="@Url.Content("~/lib/jquery-validation/dist/additional-methods.js")"></script>
 <div class="container-fluid">
     <div class="row">
         <div class="col p-3">
@@ -13,106 +14,17 @@
                 @await Html.PartialAsync("_Table", new ViewDataDictionary(ViewData){{"id" , "best"}, {"name" ,"Best function"}, {"scrollable", false}})
             </div>
             <div class="row">
-               @await Html.PartialAsync("_Table", new ViewDataDictionary(ViewData){{"id" , "all"}, {"name" ,"All functions"}, {"scrollable", true}})
+                @await Html.PartialAsync("_Table", new ViewDataDictionary(ViewData){{"id" , "all"}, {"name" ,"All functions"}, {"scrollable", true}})
             </div>
         </div>
     </div>
     <div class="progress">
-        <div class="progress-bar" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0"
-            aria-valuemax="100"></div>
+        <div class="progress-bar" role="progressbar" style="width: 0" aria-valuenow="0" aria-valuemin="0"
+             aria-valuemax="100"></div>
     </div>
 </div>
 
 
+<script src="@Url.Content("~/js/site.js")" type="module"></script>
 
-
-<script>
-
-
-
-    (async () => {
-        const hubConnection = new signalR.HubConnectionBuilder()
-            .withUrl("/generator")
-            .build();
-        await hubConnection.start();
-
-        let currentProgress = 0;
-
-
-        const setProgress = progress => {
-            $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
-        }
-
-        const createRow = ({ functionText, avalancheEffect }) =>
-            $("<tr/>").append($("<td/>", {
-                html: $("<pre/>", {
-                    text: functionText
-                })
-
-            })).append($("<td/>", {
-                text: avalancheEffect
-            }));
-
-
-
-
-        hubConnection.on("bestchanged",
-            item => {
-                const tableBody = $("#best tbody");
-                tableBody.html('');
-                tableBody.append(createRow(item));
-
-
-            });
-
-
-
-        hubConnection.on("progress", progress => {
-            if (progress > currentProgress) {
-                currentProgress = progress;
-
-                setProgress(currentProgress);
-            }
-        });
-
-        const startStream = config => {
-            hubConnection.stream("generate", config)
-                .subscribe({
-                    next: item => {
-                        console.log(item);
-
-                        const table = $("#all table");
-
-                        console.log(table.html());
-
-                        table.append(createRow(item));
-
-
-                    },
-                    complete: () => {
-                        var li = document.createElement("li");
-                        li.textContent = "Stream completed";
-                        document.body.appendChild(li);
-                    },
-                    error: err => {
-                        console.log(err);
-                        var li = document.createElement("li");
-                        li.textContent = err;
-                        document.body.appendChild(li);
-                    }
-                });
-
-        }
-        $("form").on("submit",
-            e => {
-                e.preventDefault();
-
-                startStream(formToObject(e.target));
-
-            }
-        );
-
-
-    })();
-
-</script>
+ 

@@ -6,63 +6,61 @@
         margin-bottom: 1rem;
     }
 </style>
-<form class="d-flex flex-column justify-content-between h-100">
+<form class="d-flex flex-column justify-content-between h-100" novalidate="novalidate">
     <div>
         <div class="form-group">
             <label for="count">Count</label>
-            <input id="count" class="form-control" name="@nameof(GeneratorConfig.Count)" type="number" min="0"
-                value="1000" />
+            <input id="count" class="form-control" name="@nameof(GeneratorConfig.Count)" type="number" min="1" value="1000"  max="@int.MaxValue" />
         </div>
 
         <div class="form-group">
             <label for="operations-count">Number of operations</label>
-            <input id="operations-count" class="form-control" name="@nameof(GeneratorConfig.OperationsCount)" type="number" min="0"
-                value="7" />
+            <input id="operations-count" class="form-control" name="@nameof(GeneratorConfig.OperationsCount)" type="number" min="1" value="7" max="60" />
         </div>
         <div class="form-group">
             <div class="form-check">
-                <input id="or" class="form-check-input" name="@nameof(GeneratorConfig.Or)" type="checkbox"
+                <input id="or" class="form-check-input operations" name="@nameof(GeneratorConfig.Or)" type="checkbox"
                     value="true" />
                 <label for="or">Or</label>
             </div>
             <div class="form-check">
-                <input id="add" class="form-check-input" name="@nameof(GeneratorConfig.Add)" type="checkbox"
+                <input id="add" class="form-check-input operations" name="@nameof(GeneratorConfig.Add)" type="checkbox"
                     value="true" />
                 <label for="count">Add</label>
             </div>
 
             <div class="form-check">
-                <input id="subtract" class="form-check-input" name="@nameof(GeneratorConfig.Subtract)" type="checkbox"
+                <input id="subtract" class="form-check-input operations" name="@nameof(GeneratorConfig.Subtract)" type="checkbox"
                     value="true" />
                 <label for="subtract">Subtract</label>
             </div>
 
             <div class="form-check">
-                <input id="xor" class="form-check-input" name="@nameof(GeneratorConfig.Xor)" type="checkbox"
+                <input id="xor" class="form-check-input operations" name="@nameof(GeneratorConfig.Xor)" type="checkbox"
                     value="true" />
                 <label for="xor">Xor</label>
             </div>
 
             <div class="form-check">
-                <input id="l-shift-xor" class="form-check-input" name="@nameof(GeneratorConfig.LShiftXor)"
+                <input id="l-shift-xor" class="form-check-input operations" name="@nameof(GeneratorConfig.LShiftXor)"
                     type="checkbox" value="true" />
                 <label for="l-shift-xor">L shift xor</label>
             </div>
 
             <div class="form-check">
-                <input id="r-shift-xor" class="form-check-input" name="@nameof(GeneratorConfig.RShiftXor)"
+                <input id="r-shift-xor" class="form-check-input operations" name="@nameof(GeneratorConfig.RShiftXor)"
                     type="checkbox" value="true" />
                 <label for="r-shift-xor">R shift xor</label>
             </div>
 
             <div class="form-check">
-                <input id="l-shift-subtract" class="form-check-input" name="@nameof(GeneratorConfig.LShiftSubtract)"
+                <input id="l-shift-subtract" class="form-check-input operations" name="@nameof(GeneratorConfig.LShiftSubtract)"
                     type="checkbox" value="true" />
                 <label for="l-shift-subtract">L shift subtract</label>
             </div>
 
             <div class="form-check">
-                <input id="l-shift-add" class="form-check-input" name="@nameof(GeneratorConfig.LShiftAdd)"
+                <input id="l-shift-add" class="form-check-input operations" name="@nameof(GeneratorConfig.LShiftAdd)"
                     type="checkbox" value="true" />
                 <label for="l-shift-add">L shift add</label>
             </div>

@@ -1,39 +1,101 @@
-﻿const formToObject = ({ elements }) => [...elements].reduce((obj, field) => {
-    const { name, type, value, disabled } = field;
+﻿
+import {attachValidation, formToObject} from "./helpers.js"
 
-    if (!name || disabled || ['file', 'reset', 'submit', 'button'].indexOf(type) > -1) {
-        return obj;
+
+(async () => {
+    const hubConnection = new signalR.HubConnectionBuilder()
+        .withUrl("/generator")
+        .withAutomaticReconnect()
+        .build();
+    await hubConnection.start();
+
+    let currentProgress = 0;
+
+
+
+    const setProgress = progress => {
+        $('.progress-bar').css('width', progress + '%').attr('aria-valuenow', progress);
     }
-    if (type === 'select-multiple') {
-        let options = [];
-        [...field.options].forEach(option => {
-            if (!option.selected) {
-                return obj;
-            }
-            options.push(option.value);
+
+    const createRow = ({ functionText, avalancheEffect }) =>
+        $("<tr/>").append($("<td/>", {
+            html: $("<pre/>", {
+                text: functionText
+            })
+
+        })).append($("<td/>", {
+            text: avalancheEffect
+        }));
+
+
+
+
+    hubConnection.on("bestchanged",
+        item => {
+            const tableBody = $("#best tbody");
+            tableBody.html('');
+            tableBody.append(createRow(item));
+
+
         });
-        if (options.length) {
-            obj[name] = options;
+
+
+
+    hubConnection.on("progress", progress => {
+        if (progress > currentProgress) {
+            currentProgress = progress;
+
+            setProgress(currentProgress);
         }
-        return obj;
+    });
+
+    const startStream = config => {
+        const allTable = $("#all tbody");
+        allTable.empty();
+        
+        hubConnection.stream("generate", config)
+            .subscribe({
+                next: item => {
+                    console.log(item);
+
+                    const table = $("#all table");
+
+                    table.append(createRow(item));
+
+
+                },
+                complete: () => {
+                    var li = document.createElement("li");
+                    li.textContent = "Stream completed";
+                    document.body.appendChild(li);
+                },
+                error: err => {
+                    console.log(err);
+                    const li = document.createElement("li");
+                    li.textContent = err;
+                    document.body.appendChild(li);
+                }
+            });
+
     }
-    if (type === 'number') {
-        obj[name] = parseFloat(value);
-        return obj;
-    }
-    if (['checkbox', 'radio'].indexOf(field.type) > -1) {
-        if (!field.checked) {
-            return obj;
-        }
-        if (value === 'true' && type == 'checkbox') {
-            obj[name] = true;
-            return obj;
-        }
-    }
 
-    obj[name] = value;
 
-    return obj;
+    const configForm = $("form");
 
-}, {});
+    console.log(configForm);
 
+    
+    attachValidation(configForm);
+
+    $(configForm).data("validator").settings.submitHandler =
+        (form, event) => {
+            event.preventDefault();
+            startStream(formToObject($(event.target)));
+        };
+    
+
+
+
+
+
+})();

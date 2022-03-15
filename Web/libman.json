@@ -16,7 +16,13 @@
       "library": "bootstrap@5.1.3",
       "destination": "wwwroot/lib/bootstrap/"
     }
-  ]
+  ,
+{
+  "provider": "unpkg",
+  "library": "jquery-validation@1.19.3",
+  "destination": "wwwroot/lib/jquery-validation"
+}
+]
 
 }
 

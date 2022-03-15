@@ -8,6 +8,6 @@ class ParametrizedExpressionProvider : IParametrizedExpressionProvider
     {
         var randomExpressionProvider = new RandomExpressionProvider();
 
-        return Expression.Block(Enumerable.Range(0, 15).Select(_ => randomExpressionProvider.GetExpression(parameterExpression, config)));
+        return Expression.Block(Enumerable.Range(0, config.OperationsCount).Select(_ => randomExpressionProvider.GetExpression(parameterExpression, config)));
     }
 }

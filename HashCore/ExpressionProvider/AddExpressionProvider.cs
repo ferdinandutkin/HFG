@@ -4,9 +4,8 @@ namespace HashCore.ExpressionProvider;
 
 class AddExpressionProvider : IParametrizedExpressionProvider
 {
+    private static readonly Random Random = new();
     public Expression GetExpression(ParameterExpression parameterExpression, GeneratorConfig config)
-    {
-        return Expression.AddAssign(parameterExpression, Expression.Constant(new Random().Next()));
-    }
+        => Expression.AddAssign(parameterExpression, Expression.Constant(Random.Next(0, int.MaxValue)));
 
 }
