@@ -12,6 +12,11 @@ class HashStatService : IHashStatService
     private float _maxAvalancheEffect = 0;
 
     public event Action<HashStatDto> BestChanged;
+
+    private Dictionary<Language, IExpressionTranspiler> Transpilers = new Dictionary<Language, IExpressionTranspiler>() {
+        { Language.CSharp, new СSharpTranspiler()},
+        { Language.Python, new PythonTranspiler() } };
+        
     public HashStatService(IMapper mapper, IHashStatsGenerator hashStatsGenerator)
     {
         _mapper = mapper;
@@ -21,16 +26,16 @@ class HashStatService : IHashStatService
     {
         foreach (var (hashStat, number) in _hashStatsGenerator.Generate(config).Select((stat, i) => (stat, i + 1)))
         {
-            var toReturn = await Task.Run(() => _mapper.Map<HashStatDto>(hashStat));
+            var toReturn = await Task.Run(() => new HashStatDto(hashStat.AvalancheEffect, hashStat.Function.ToString(Transpilers[config.Language])));
 
-            if (toReturn.AvalancheEffect > _maxAvalancheEffect)
+            if (toReturn.AvalancheEffect > _maxAvalancheEffect || number == 0)
             {
                 _maxAvalancheEffect = toReturn.AvalancheEffect;
                 BestChanged?.Invoke(toReturn);
-            }
+              }
 
             
-            progress?.Report((int)((number * 100 )/ config.Count));
+            progress?.Report((number * 100 )/ config.Count);
 
             yield return toReturn;
         }

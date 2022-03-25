@@ -1,10 +1,12 @@
 using System.Text.Json;
 using HashCore;
 using Web;
+using System.Text.Json.Serialization;
 using Web.AutoMapper;
 using Web.Hubs;
 using Web.Interfaces;
 using Web.Models;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,10 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddRazorPages();
 builder.Services.AddSignalR(e =>
 {
-
     e.EnableDetailedErrors = true;
 
-}).AddJsonProtocol(f => f.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase);
+}).AddJsonProtocol(options =>
+{
+    options.PayloadSerializerOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+    options.PayloadSerializerOptions.Converters
+           .Add(new JsonStringEnumConverter());
+});
 builder.Services.AddAutoMapper(typeof(Program));
 
 builder.Services.AddScoped<IHashStatsGenerator, HashStatsGenerator>();

@@ -1,5 +1,7 @@
-﻿export const formToObject = (form) => form.find("input").get().reduce((obj, field) => {
+﻿export const formToObject = (form) => form.find("input, select").get().reduce((obj, field) => {
     const { name, type, value, disabled } = field;
+
+    console.log(name, value);
 
     if (!name || disabled || ['file', 'reset', 'submit', 'button'].indexOf(type) > -1) {
         return obj;
@@ -30,6 +32,7 @@
             return obj;
         }
     }
+  
 
     obj[name] = value;
 
@@ -58,6 +61,9 @@ export const attachValidation = form => {
             max: {
                 param: 0x7fffffff
             }
+        },
+        Language: {
+                required: true
         }
     };
     let groups = {

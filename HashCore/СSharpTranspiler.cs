@@ -2,11 +2,12 @@
 using System.Text;
 
 namespace HashCore;
-
 public class СSharpTranspiler : IExpressionTranspiler
 {
     private class Visitor : ExpressionVisitor
     {
+        private const string Spacing = "    ";
+        private const string Return = "return ";
         private static readonly Dictionary<ExpressionType, string> BinaryOperators = new()
         {
             [ExpressionType.Add] = "+",
@@ -56,31 +57,39 @@ public class СSharpTranspiler : IExpressionTranspiler
 
         protected override Expression VisitLambda<T>(Expression<T> node)
         {
-            _buffer.Append(node.ReturnType.Name);
+            _buffer.Append(node.ReturnType.GetFriendlyName());
             _buffer.Append(" Method(");
-            _buffer.AppendJoin(", ", node.Parameters.Select(param => $"{param.Type.Name} {param.Name}"));
+            _buffer.AppendJoin(", ", node.Parameters.Select(param => $"{param.Type.GetFriendlyName()} {param.Name}"));
             _buffer.AppendLine(")");
 
             Visit(node.Body);
 
             return node;
         }
-        protected override Expression VisitBlock(BlockExpression node)
+        protected override Expression VisitBlock(BlockExpression block)
         {
             _buffer.Append("{");
             _buffer.AppendLine();
-            foreach (var ex in node.Expressions)
+            foreach (var ex in block.Expressions)
             {
-                _buffer.Append("    ");
-                if (node.Type != typeof(void) && node.Result.Equals(ex))
+                _buffer.Append(Spacing);
+              
+                if (block.Type != typeof(void) && block.Result.Equals(ex) && !ex.IsAssignmentExpression())
                 {
-                    _buffer.Append("return ");
+                    _buffer.Append(Return);
                 }
                 Visit(ex);
                 _buffer.AppendLine(";");
+                if (block.Type != typeof(void) && block.Result.Equals(ex) && ex.IsAssignmentExpression())
+                {
+                    _buffer.Append(Spacing);
+                    _buffer.Append(Return);
+                    Visit((ex as BinaryExpression).Left);
+                    _buffer.AppendLine(";");
+                }
             }
             _buffer.AppendLine("}");
-            return node;
+            return block;
         }
 
         protected override Expression VisitParameter(ParameterExpression node)

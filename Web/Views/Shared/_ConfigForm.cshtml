@@ -1,5 +1,5 @@
 ﻿@using HashCore
-
+@using Web.Views;
 
 <style>
     .form-group {
@@ -10,58 +10,68 @@
     <div>
         <div class="form-group">
             <label for="count">Count</label>
-            <input id="count" class="form-control" name="@nameof(GeneratorConfig.Count)" type="number" min="1" value="1000"  max="@int.MaxValue" />
+            <input id="count" class="form-control" name="@nameof(GeneratorConfig.Count)" type="number" min="1" value="1000" max="@int.MaxValue"/>
         </div>
 
         <div class="form-group">
             <label for="operations-count">Number of operations</label>
-            <input id="operations-count" class="form-control" name="@nameof(GeneratorConfig.OperationsCount)" type="number" min="1" value="7" max="60" />
+            <input id="operations-count" class="form-control" name="@nameof(GeneratorConfig.OperationsCount)" type="number" min="1" value="7" max="60"/>
         </div>
+        <select id="language" class="form-select" name="@nameof(GeneratorConfig.Language)" asp-items="Html.GetEnumValueSelectList<Language>()">
+            <option selected value=''>Language</option>
+        </select>
+
         <div class="form-group">
             <div class="form-check">
+                <input id="all" class="form-check-input" type="checkbox"
+                       value="true"/>
+                <label for="all">All</label>
+            </div>
+            
+            <div class="form-check">
                 <input id="or" class="form-check-input operations" name="@nameof(GeneratorConfig.Or)" type="checkbox"
-                    value="true" />
+                       value="true"/>
                 <label for="or">Or</label>
             </div>
             <div class="form-check">
                 <input id="add" class="form-check-input operations" name="@nameof(GeneratorConfig.Add)" type="checkbox"
-                    value="true" />
+                       value="true"/>
                 <label for="count">Add</label>
             </div>
 
             <div class="form-check">
                 <input id="subtract" class="form-check-input operations" name="@nameof(GeneratorConfig.Subtract)" type="checkbox"
-                    value="true" />
+                       value="true"/>
                 <label for="subtract">Subtract</label>
             </div>
 
             <div class="form-check">
                 <input id="xor" class="form-check-input operations" name="@nameof(GeneratorConfig.Xor)" type="checkbox"
-                    value="true" />
+                       value="true"/>
                 <label for="xor">Xor</label>
             </div>
 
             <div class="form-check">
                 <input id="l-shift-xor" class="form-check-input operations" name="@nameof(GeneratorConfig.LShiftXor)"
-                    type="checkbox" value="true" />
+                       type="checkbox" value="true"/>
                 <label for="l-shift-xor">L shift xor</label>
             </div>
 
             <div class="form-check">
                 <input id="r-shift-xor" class="form-check-input operations" name="@nameof(GeneratorConfig.RShiftXor)"
-                    type="checkbox" value="true" />
+                       type="checkbox" value="true"/>
                 <label for="r-shift-xor">R shift xor</label>
             </div>
 
             <div class="form-check">
                 <input id="l-shift-subtract" class="form-check-input operations" name="@nameof(GeneratorConfig.LShiftSubtract)"
-                    type="checkbox" value="true" />
+                       type="checkbox" value="true"/>
                 <label for="l-shift-subtract">L shift subtract</label>
             </div>
 
             <div class="form-check">
                 <input id="l-shift-add" class="form-check-input operations" name="@nameof(GeneratorConfig.LShiftAdd)"
-                    type="checkbox" value="true" />
+                       type="checkbox" value="true"/>
                 <label for="l-shift-add">L shift add</label>
             </div>
 
@@ -69,3 +79,9 @@
     </div>
     <button class="btn btn-primary mx-auto" style="width: 300px">Generate</button>
 </form>
+
+<script>
+$('#all').click(function () {    
+    $('.operations:checkbox').prop('checked', this.checked);    
+});
+</script>

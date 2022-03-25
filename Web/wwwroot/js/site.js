@@ -90,6 +90,8 @@ import {attachValidation, formToObject} from "./helpers.js"
     $(configForm).data("validator").settings.submitHandler =
         (form, event) => {
             event.preventDefault();
+            console.log("FFFFFFFFFFFFFFFFFFFFFFFFFF");
+            console.log(formToObject($(event.target)));
             startStream(formToObject($(event.target)));
         };
     
