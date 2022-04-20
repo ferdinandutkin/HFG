@@ -6,5 +6,5 @@ class SubtractExpressionProvider : IParametrizedExpressionProvider
 {
     private static readonly Random Random = new();
     public Expression GetExpression(ParameterExpression parameterExpression, GeneratorConfig config)
-        => Expression.SubtractAssign(parameterExpression, Expression.Constant(Random.Next(int.MinValue, 0)));
+        => Expression.SubtractAssign(parameterExpression, Expression.Constant(Random.Next(0, int.MaxValue)));
 }
